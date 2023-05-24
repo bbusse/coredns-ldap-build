@@ -1,0 +1,38 @@
+---
+name: Build
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+
+env:
+  PKG_NAME: coredns
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ${{ env.PKG_NAME }}
+        uses: actions/checkout@v3
+        with:
+          repository: 'coredns/coredns'
+          ref: 'master'
+
+      - name: Build and create archive
+        run: |
+          sudo add-apt-repository ppa:longsleep/golang-backports -y
+          sudo apt update
+          sudo apt install -y curl golang-go
+          go build
+          tar -cJvf ${{ env.PKG_NAME }}-linux-amd64-latest.tar.xz ${{ env.PKG_NAME }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.PKG_NAME }}-linux-amd64-latest
+          path: ${{ env.PKG_NAME }}-linux-amd64-latest.tar.xz
