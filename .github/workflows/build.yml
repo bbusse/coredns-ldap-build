@@ -12,6 +12,7 @@ on:
 
 env:
   PKG_NAME: coredns-ldap
+  PKG_BINARY: coredns
 
 jobs:
   build:
@@ -32,7 +33,7 @@ jobs:
           go get github.com/vlcty/coredns-auto-ipv6-ptr
           go get github.com/bbusse/coredns-ldap
           go generate && go build
-          tar -cJvf ${{ env.PKG_NAME }}-linux-amd64-latest.tar.xz ${{ env.PKG_NAME }}
+          tar -cJvf ${{ env.PKG_NAME }}-linux-amd64-latest.tar.xz ${{ env.PKG_BINARY }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
