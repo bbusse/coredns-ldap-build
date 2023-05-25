@@ -34,9 +34,9 @@ jobs:
 
           run: |
             git clone --depth 1 ${{ env.COREDNS_PKG_REPO_URL }}
-            go install github.com/vlcty/coredns-auto-ipv6-ptr@latest
-            go install ${{ env.PKG_REPO }}@latest
             cd ${{ env.PKG_BINARY }}
+            go get github.com/vlcty/coredns-auto-ipv6-ptr
+            go get ${{ env.PKG_REPO }}
             printf "\nldap:${{ env.PKG_REPO }}\nautoipv6ptr:github.com/vlcty/coredns-auto-ipv6-ptr\n" >> plugin.cfg
             go generate && go build
             tar -cJvf ${{ env.PKG_NAME }}-freebsd-amd64-latest.tar.xz coredns
