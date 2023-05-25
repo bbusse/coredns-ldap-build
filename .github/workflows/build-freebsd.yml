@@ -34,8 +34,8 @@ jobs:
 
           run: |
             git clone --depth 1 ${{ env.COREDNS_PKG_REPO_URL }}
-            go get github.com/vlcty/coredns-auto-ipv6-ptr
-            go get ${{ env.PKG_REPO }}
+            go install github.com/vlcty/coredns-auto-ipv6-ptr
+            go install ${{ env.PKG_REPO }}
             cd ${{ env.PKG_BINARY }}
             printf "\nldap:${{ env.PKG_REPO }}\nautoipv6ptr:github.com/vlcty/coredns-auto-ipv6-ptr\n" >> plugin.cfg
             go generate && go build
