@@ -1,0 +1,48 @@
+---
+name: FreeBSD Build
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+
+env:
+  PKG_NAME: coredns-ldap
+  PKG_BINARY: coredns
+  PKG_DEPS: "curl git go"
+  PKG_REPO: "github.com/bbusse/coredns-ldap"
+  PKG_REPO_URL: "https://github.com/bbusse/coredns-ldap"
+  COREDNS_PKG_REPO_URL: "https://github.com/coredns/coredns"
+
+jobs:
+  build:
+    runs-on: macos-12
+    name: Build on FreeBSD
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build on FreeBSD
+        uses: vmactions/freebsd-vm@v0.2.9
+        id: build
+        with:
+          usesh: true
+          prepare: |
+            pkg install -y ${{ env.PKG_DEPS }}
+
+          run: |
+            git clone --depth 1 ${{ env.COREDNS_PKG_REPO_URL }}
+            go get github.com/vlcty/coredns-auto-ipv6-ptr
+            go get ${{ env.PKG_REPO }}
+            cd ${{ env.PKG_BINARY }}
+            printf "\nldap:${{ env.PKG_REPO }}\nautoipv6ptr:github.com/vlcty/coredns-auto-ipv6-ptr\n" >> plugin.cfg
+            go generate && go build
+            tar -cJvf ${{ env.PKG_NAME }}-freebsd-amd64-latest.tar.xz coredns
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.PKG_NAME }}-freebsd-amd64-latest
+          path: ${{ env.PKG_NAME }}-freebsd-amd64-latest.tar.xz

@@ -11,7 +11,8 @@ on:
   workflow_dispatch:
 
 env:
-  PKG_NAME: coredns
+  PKG_NAME: coredns-ldap
+  PKG_BINARY: coredns
 
 jobs:
   build:
@@ -28,8 +29,11 @@ jobs:
           sudo add-apt-repository ppa:longsleep/golang-backports -y
           sudo apt update
           sudo apt install -y curl golang-go
-          go build
-          tar -cJvf ${{ env.PKG_NAME }}-linux-amd64-latest.tar.xz ${{ env.PKG_NAME }}
+          printf "\nldap:github.com/bbusse/coredns-ldap\nautoipv6ptr:github.com/vlcty/coredns-auto-ipv6-ptr\n" >> plugin.cfg
+          go get github.com/vlcty/coredns-auto-ipv6-ptr
+          go get github.com/bbusse/coredns-ldap
+          go generate && go build
+          tar -cJvf ${{ env.PKG_NAME }}-linux-amd64-latest.tar.xz ${{ env.PKG_BINARY }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
