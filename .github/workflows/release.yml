@@ -56,4 +56,4 @@ jobs:
         automatic_release_tag: "latest"
         files: |
           ${{ env.PKG_NAME }}-linux-amd64-latest/${{ env.PKG_NAME }}-linux-amd64-latest.tar.xz
-          ${{ env.PKG_NAME }}-freebsd-amd64-latest/${{ env.PKG_NAME }}-freebsd-amd64-latest.tar.xz
+          coredns-ldap-build/coredns-ldap-build/coredns/coredns-ldap-${{ env.PKG_NAME }}-freebsd-amd64-latest/${{ env.PKG_NAME }}-freebsd-amd64-latest.tar.xz
